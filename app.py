@@ -1,25 +1,28 @@
 from flask import Flask, request
 
-app = Flask(__name__)
+app = Flask(_name_)
 
-VERIFY_TOKEN = 'fire_alarm'  # Use the exact same token in Facebook setup
+# Make SURE this token is EXACTLY what you enter in Facebook Developer Console
+VERIFY_TOKEN = 'fire_alarm'  # <- Set this to a known string
 
 @app.route('/', methods=['GET', 'POST'])
 def webhook():
     if request.method == 'GET':
-        # Facebook is trying to verify your webhook
+        mode = request.args.get('hub.mode')
         token = request.args.get('hub.verify_token')
         challenge = request.args.get('hub.challenge')
 
-        if token == VERIFY_TOKEN:
+        # Correct verification logic
+        if mode == 'subscribe' and token == VERIFY_TOKEN:
             return challenge, 200
         else:
-            return 'Invalid verification token', 403
+            return 'Verification failed. Tokens do not match.', 403
 
     elif request.method == 'POST':
-        # Facebook will send a POST request with messages here
         print(request.json)
-        return 'OK', 200
+        return 'EVENT_RECEIVED', 200
 
-if __name__ == '__main__':
+    return 'Not a valid request', 404
+
+if _name_ == '_main_':
     app.run(host='0.0.0.0', port=10000)
