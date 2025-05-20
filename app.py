@@ -1,6 +1,6 @@
 from flask import Flask, request
 
-app = Flask(_name_)
+app = Flask(__name__)
 
 # Make SURE this token is EXACTLY what you enter in Facebook Developer Console
 VERIFY_TOKEN = 'fire_alarm'  # <- Set this to a known string
@@ -24,5 +24,5 @@ def webhook():
 
     return 'Not a valid request', 404
 
-if _name_ == '_main_':
+if __name__ == '__main__':
     app.run(host='0.0.0.0', port=10000)
