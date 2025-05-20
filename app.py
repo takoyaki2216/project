@@ -1,6 +1,6 @@
 from flask import Flask, request
 
-app = Flask(_name_)
+app = Flask(__name__)
 
 VERIFY_TOKEN = 'your_verify_token_here'
 
@@ -18,5 +18,5 @@ def webhook():
         print(request.json)
         return 'OK', 200
 
-if _name_ == '_main_':
+if __name__ == '__main__':
     app.run()
