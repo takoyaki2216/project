@@ -2,27 +2,29 @@ from flask import Flask, request
 
 app = Flask(__name__)
 
-# Make SURE this token is EXACTLY what you enter in Facebook Developer Console
-VERIFY_TOKEN = 'fire_alarm'  # <- Set this to a known string
+VERIFY_TOKEN = 'fire_alarm'
 
 @app.route('/', methods=['GET', 'POST'])
 def webhook():
     if request.method == 'GET':
-        mode = request.args.get('hub.mode')
         token = request.args.get('hub.verify_token')
         challenge = request.args.get('hub.challenge')
+        mode = request.args.get('hub.mode')
 
-        # Correct verification logic
         if mode == 'subscribe' and token == VERIFY_TOKEN:
             return challenge, 200
         else:
-            return 'Verification failed. Tokens do not match.', 403
+            return 'Verification failed', 403
 
     elif request.method == 'POST':
-        print(request.json)
+        data = request.get_json()
+        print("Incoming POST data:", data)
+
+        # Extract PSID
+        try:
+            sender_id = data['entry'][0]['messaging'][0]['sender']['id']
+            print("Sender PSID:", sender_id)
+        except Exception as e:
+            print("Error extracting PSID:", e)
+
         return 'EVENT_RECEIVED', 200
-
-    return 'Not a valid request', 404
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=10000)
